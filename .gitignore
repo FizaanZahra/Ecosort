@@ -1,0 +1,22 @@
+# Dependencies
+frontend/node_modules/
+
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
