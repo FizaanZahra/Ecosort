@@ -41,7 +41,7 @@ export default function DisposePage() {
             </label>
 
             <select
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
               defaultValue=""
             >
               <option value="" disabled>
@@ -69,7 +69,7 @@ export default function DisposePage() {
               placeholder="Enter quantity"
               min="0"
               step="0.1"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
 
@@ -81,7 +81,7 @@ export default function DisposePage() {
             </label>
 
             <select
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
               defaultValue=""
             >
               <option value="" disabled>

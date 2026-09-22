@@ -161,9 +161,9 @@ export default function Dashboard() {
             {/* Plastic Waste */}
             <div className="flex items-center justify-between border-b pb-4">
               <div>
-                <p className="font-medium">
-                  Plastic Waste
-                </p>
+                <p className="font-medium text-gray-900">
+  Plastic Waste
+</p>
 
                 <p className="text-sm text-gray-500">
                   Today
@@ -179,9 +179,9 @@ export default function Dashboard() {
             {/* Paper Waste */}
             <div className="flex items-center justify-between border-b pb-4">
               <div>
-                <p className="font-medium">
-                  Paper Waste
-                </p>
+                <p className="font-medium text-gray-900">
+  Paper Waste
+</p>
 
                 <p className="text-sm text-gray-500">
                   Yesterday
@@ -197,9 +197,9 @@ export default function Dashboard() {
             {/* Glass Waste */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">
-                  Glass Waste
-                </p>
+               <p className="font-medium text-gray-900">
+  Glass Waste
+</p>
 
                 <p className="text-sm text-gray-500">
                   2 days ago

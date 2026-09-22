@@ -27,7 +27,7 @@ export default function Register() {
             <input
               type="text"
               placeholder="Enter your name"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
 
@@ -40,7 +40,7 @@ export default function Register() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
 
@@ -53,7 +53,7 @@ export default function Register() {
             <input
               type="password"
               placeholder="Create a password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
 
@@ -66,7 +66,7 @@ export default function Register() {
             <input
               type="password"
               placeholder="Confirm your password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
 
