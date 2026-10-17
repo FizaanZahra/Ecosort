@@ -123,6 +123,61 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// @route   POST /api/users/admin-login
+// @desc    Authenticate specifically as administrator
+// @access  Public
+router.post("/admin-login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please provide admin email and password" });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid administrator credentials."
+      });
+    }
+
+    if (user.role !== "admin") {
+      return res.status(403).json({
+        message: "Access Denied: This account does not possess administrator privileges. Please use standard member login."
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        message: "Invalid administrator credentials."
+      });
+    }
+
+    const token = generateToken(user._id);
+
+    res.json({
+      message: "Administrator authentication successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        ecoPoints: user.ecoPoints || 0
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Admin login failed",
+      error: error.message
+    });
+  }
+});
+
 // @route   GET /api/users/profile
 // @desc    Get current user profile
 // @access  Private

@@ -163,6 +163,11 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ email, password }),
       }),
+    adminLogin: (email: string, password: string) =>
+      apiRequest<{ message: string; token: string; user: User }>("/users/admin-login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
     getProfile: () => apiRequest<{ success: boolean; user: User }>("/users/profile"),
     updateProfile: (data: { name?: string; currentPassword?: string; newPassword?: string }) =>
       apiRequest<{ message: string; user: User }>("/users/profile", {

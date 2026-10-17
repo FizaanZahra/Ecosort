@@ -16,6 +16,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  adminLogin: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextType>({
   token: null,
   loading: true,
   login: async () => ({ success: false }),
+  adminLogin: async () => ({ success: false }),
   register: async () => ({ success: false }),
   logout: () => {},
   refreshUser: async () => {},
@@ -77,6 +79,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const adminLogin = async (email: string, password: string) => {
+    try {
+      const res = await api.auth.adminLogin(email, password);
+      saveToken(res.token);
+      setStoredUser(res.user);
+      setTokenState(res.token);
+      setUser(res.user);
+      return { success: true };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Administrator login failed";
+      return { success: false, message };
+    }
+  };
+
   const register = async (name: string, email: string, password: string) => {
     try {
       const res = await api.auth.register(name, email, password);
@@ -119,6 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         loading,
         login,
+        adminLogin,
         register,
         logout,
         refreshUser,

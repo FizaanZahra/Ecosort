@@ -63,7 +63,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push("/login");
+      router.push("/admin/login");
       return;
     }
 
@@ -182,12 +182,21 @@ export default function AdminPage() {
               </button>
             </div>
 
-            <Link
-              href="/dashboard"
-              className="mt-6 inline-block text-xs font-semibold text-gray-500 hover:text-gray-800"
-            >
-              ← Return to User Dashboard
-            </Link>
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/admin/login"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-600 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition-colors"
+              >
+                <span>🛡️</span>
+                <span>Switch to Administrator Account</span>
+              </Link>
+              <Link
+                href="/dashboard"
+                className="inline-block text-xs font-semibold text-gray-500 hover:text-gray-800"
+              >
+                ← Return to User Dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </main>

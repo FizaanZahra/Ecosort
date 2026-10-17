@@ -93,6 +93,17 @@ export default function Login() {
             Register
           </Link>
         </p>
+
+        {/* Administrator Portal Link */}
+        <div className="mt-6 border-t border-gray-100 pt-4 text-center">
+          <Link
+            href="/admin/login"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-emerald-700 transition-colors"
+          >
+            <span>🛡️</span>
+            <span>Looking for Administrator Portal? Sign in as Admin →</span>
+          </Link>
+        </div>
       </div>
     </main>
   );
