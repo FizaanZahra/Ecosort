@@ -9,6 +9,8 @@ const router = express.Router();
 const MRS_WEIGHTS = {
   metal: 0.95,
   glass: 0.90,
+  "e-waste": 0.88,
+  organic: 0.85,
   paper: 0.80,
   cardboard: 0.80,
   plastic: 0.75,
@@ -36,6 +38,8 @@ router.get("/stats", protect, async (req, res) => {
       metal: 0,
       glass: 0,
       cardboard: 0,
+      organic: 0,
+      "e-waste": 0,
       other: 0
     };
 

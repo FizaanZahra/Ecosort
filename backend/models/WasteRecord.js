@@ -11,7 +11,7 @@ const wasteRecordSchema = new mongoose.Schema(
     wasteCategory: {
       type: String,
       required: true,
-      enum: ["plastic", "paper", "metal", "glass", "cardboard", "other"],
+      enum: ["plastic", "paper", "metal", "glass", "cardboard", "organic", "e-waste", "other"],
       lowercase: true,
       trim: true
     },

@@ -43,230 +43,280 @@ export default function Dashboard() {
 
   if (authLoading || (loading && !stats)) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen bg-slate-50/60">
         <Navbar />
         <div className="flex h-96 items-center justify-center">
           <div className="flex flex-col items-center gap-3 text-gray-500">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
-            <p className="text-sm font-medium">Loading your EcoSort dashboard...</p>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"></div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Loading Dashboard...</p>
           </div>
         </div>
       </main>
     );
   }
 
-  const categoryIcons: Record<string, string> = {
-    plastic: "🧴",
-    paper: "📄",
-    metal: "🥫",
-    glass: "🍾",
-    cardboard: "📦",
-    other: "🗑️",
+  const categoryMeta: Record<string, { icon: string; label: string; color: string }> = {
+    plastic: { icon: "🧴", label: "Plastic", color: "bg-blue-50 border-blue-200 text-blue-800" },
+    paper: { icon: "📄", label: "Paper", color: "bg-amber-50 border-amber-200 text-amber-800" },
+    metal: { icon: "🥫", label: "Metal", color: "bg-slate-100 border-slate-300 text-slate-800" },
+    glass: { icon: "🍾", label: "Glass", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+    cardboard: { icon: "📦", label: "Cardboard", color: "bg-orange-50 border-orange-200 text-orange-800" },
+    organic: { icon: "🍌", label: "Organic", color: "bg-lime-50 border-lime-200 text-lime-800" },
+    "e-waste": { icon: "⚡", label: "E-Waste", color: "bg-purple-50 border-purple-200 text-purple-800" },
+    other: { icon: "🗑️", label: "Other", color: "bg-gray-100 border-gray-200 text-gray-700" },
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-16">
+    <main className="min-h-screen bg-slate-50/60 pb-20">
       <Navbar />
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200/80 pb-6">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-            <p className="mt-1 text-gray-600">
-              Welcome back, <span className="font-semibold text-green-700">{user?.name}</span>! Track your
-              environmental impact and points.
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-800 mb-2">
+              <span>🌱</span> EcoSort Member Workspace
+            </div>
+            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+              Welcome back, <span className="text-emerald-700">{user?.name}</span>!
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Track your waste segregation impact, spend your EcoPoints, and monitor campus smart bins.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/dispose"
-              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 transition active:scale-95"
             >
               <span>+</span>
               <span>Dispose Waste</span>
+            </Link>
+            <Link
+              href="/rewards"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-900 shadow-sm hover:bg-amber-100 transition active:scale-95"
+            >
+              <span>🎁</span>
+              <span>Rewards Store</span>
             </Link>
           </div>
         </div>
 
         {error && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             ⚠️ {error}
           </div>
         )}
 
-        {/* Primary Metrics Grid */}
+        {/* 4 Core Metric Widgets */}
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {/* EcoPoints */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          {/* 1. EcoPoints */}
+          <div className="relative overflow-hidden rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50/50 via-white to-white p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-center justify-between">
               <span className="text-3xl">⭐</span>
-              <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700 border border-green-200">
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-800">
                 Reward Balance
               </span>
             </div>
-            <p className="mt-4 text-sm text-gray-500">EcoPoints Balance</p>
-            <h3 className="mt-1 text-3xl font-bold text-green-700">
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">EcoPoints</p>
+            <h3 className="mt-1 text-3xl font-black text-amber-500">
               {stats?.ecoPoints ?? 0}
             </h3>
+            <Link href="/rewards" className="mt-3 inline-block text-xs font-bold text-emerald-700 hover:underline">
+              Redeem Rewards →
+            </Link>
           </div>
 
-          {/* Waste Disposed */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          {/* 2. Total Mass */}
+          <div className="relative overflow-hidden rounded-3xl border border-blue-200/80 bg-gradient-to-br from-blue-50/50 via-white to-white p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-center justify-between">
               <span className="text-3xl">♻️</span>
-              <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
-                Total Mass
+              <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-800">
+                Total Recycled
               </span>
             </div>
-            <p className="mt-4 text-sm text-gray-500">Waste Disposed</p>
-            <h3 className="mt-1 text-3xl font-bold text-gray-900">
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Segregated Mass</p>
+            <h3 className="mt-1 text-3xl font-black text-gray-900">
               {stats?.totalWasteKg ?? 0} <span className="text-base font-normal text-gray-500">kg</span>
             </h3>
+            <p className="mt-3 text-xs text-gray-500">Across {stats?.totalContributions ?? 0} sessions</p>
           </div>
 
-          {/* Contributions */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-3xl">🌍</span>
-              <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
-                Activities
-              </span>
-            </div>
-            <p className="mt-4 text-sm text-gray-500">Disposal Sessions</p>
-            <h3 className="mt-1 text-3xl font-bold text-gray-900">
-              {stats?.totalContributions ?? 0}
-            </h3>
-          </div>
-
-          {/* Material Recovery Score */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          {/* 3. Material Recovery Score (MRS) */}
+          <div className="relative overflow-hidden rounded-3xl border border-purple-200/80 bg-gradient-to-br from-purple-50/50 via-white to-white p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-center justify-between">
               <span className="text-3xl">🎯</span>
-              <span className="rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-700 border border-purple-200">
-                MRS Index
+              <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-[10px] font-extrabold text-purple-800">
+                Efficiency Index
               </span>
             </div>
-            <p className="mt-4 text-sm text-gray-500">Recovery Score</p>
-            <h3 className="mt-1 text-3xl font-bold text-purple-700">
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Recovery Score</p>
+            <h3 className="mt-1 text-3xl font-black text-purple-700">
               {stats?.materialRecoveryScore ?? 0}
-              <span className="text-base font-normal text-gray-500"> / 100</span>
+              <span className="text-base font-normal text-gray-400"> / 100</span>
             </h3>
-          </div>
-        </div>
-
-        {/* Category Breakdown Section */}
-        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">Waste Segregation by Category</h3>
-            <span className="text-xs text-gray-500">Measured in kilograms</span>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {Object.entries(stats?.categoryTotals || {}).map(([category, kg]) => (
+            <div className="mt-3 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
               <div
-                key={category}
-                className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center transition hover:bg-green-50/50"
-              >
-                <div className="text-2xl">{categoryIcons[category] || "📦"}</div>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  {category}
-                </p>
-                <p className="mt-1 text-lg font-bold text-gray-900">{kg} kg</p>
-              </div>
-            ))}
+                className="h-1.5 rounded-full bg-purple-600 transition-all duration-700"
+                style={{ width: `${Math.min(100, stats?.materialRecoveryScore ?? 0)}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* 4. Smart Bins */}
+          <div className="relative overflow-hidden rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/50 via-white to-white p-6 shadow-sm hover:shadow-md transition">
+            <div className="flex items-center justify-between">
+              <span className="text-3xl">📍</span>
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-800">
+                Campus Bins
+              </span>
+            </div>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Available Bins</p>
+            <h3 className="mt-1 text-3xl font-black text-emerald-700">
+              {stats?.availableBinsCount ?? 0}
+              <span className="text-base font-normal text-gray-400"> / {stats?.totalBinsCount ?? 0}</span>
+            </h3>
+            <Link href="/bins" className="mt-3 inline-block text-xs font-bold text-emerald-700 hover:underline">
+              Inspect Fill Levels →
+            </Link>
           </div>
         </div>
 
-        {/* Action Shortcuts */}
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {/* Action 1 */}
-          <div className="rounded-2xl bg-gradient-to-br from-green-700 to-emerald-800 p-8 text-white shadow-sm">
-            <div className="text-4xl">🗑️</div>
-            <h3 className="mt-4 text-2xl font-bold">Record Waste Disposal</h3>
-            <p className="mt-2 text-green-100 text-sm leading-relaxed">
-              Log your sorted recyclable waste to earn verified EcoPoints and improve your community recovery score.
-            </p>
+        {/* Category Segregation Breakdown */}
+        <div className="mt-8 rounded-3xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-6">
+            <div>
+              <h3 className="text-lg font-extrabold text-gray-900">Your Segregated Waste by Stream</h3>
+              <p className="text-xs text-gray-500">Live breakdown calculated from your stored disposal entries</p>
+            </div>
+            <Link href="/history" className="text-xs font-bold text-emerald-700 hover:underline">
+              Detailed History Ledger →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            {Object.entries(stats?.categoryTotals || {}).map(([category, kg]) => {
+              const meta = categoryMeta[category] || categoryMeta.other;
+              return (
+                <div
+                  key={category}
+                  className={`flex flex-col items-center justify-center rounded-2xl border p-3.5 text-center transition-all hover:scale-105 ${meta.color}`}
+                >
+                  <span className="text-2xl">{meta.icon}</span>
+                  <span className="mt-1.5 text-[11px] font-bold uppercase tracking-wider">
+                    {meta.label}
+                  </span>
+                  <span className="mt-1 text-sm font-extrabold text-gray-900">{kg} kg</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action Banners */}
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <div className="rounded-3xl bg-gradient-to-br from-emerald-800 to-teal-800 p-6 text-white shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-3xl">🗑️</span>
+              <h4 className="mt-3 text-lg font-bold">Log New Disposal</h4>
+              <p className="mt-1 text-xs text-emerald-100 leading-relaxed">
+                Manually record items across all 8 recyclable categories to earn points immediately.
+              </p>
+            </div>
             <Link
               href="/dispose"
-              className="mt-6 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-green-800 shadow-sm hover:bg-green-50 transition-colors"
+              className="mt-5 inline-block text-center rounded-xl bg-white py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
             >
               Open Disposal Form →
             </Link>
           </div>
 
-          {/* Action 2 */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-4xl">📍</div>
-              <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 border border-green-200">
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                {stats?.availableBinsCount ?? 0} Bins Available
-              </span>
+          <div className="rounded-3xl bg-gradient-to-br from-amber-600 to-yellow-600 p-6 text-white shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-3xl">🎁</span>
+              <h4 className="mt-3 text-lg font-bold">EcoPoints Rewards Store</h4>
+              <p className="mt-1 text-xs text-amber-100 leading-relaxed">
+                Exchange points for campus dining vouchers, coffee passes, and eco-merchandise.
+              </p>
             </div>
-            <h3 className="mt-4 text-2xl font-bold text-gray-900">Nearby Smart Bins</h3>
-            <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-              Check simulated fill levels for campus and community bins before disposing of your materials.
-            </p>
             <Link
-              href="/bins"
-              className="mt-6 inline-block rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition-colors"
+              href="/rewards"
+              className="mt-5 inline-block text-center rounded-xl bg-white py-2 text-xs font-bold text-amber-900 hover:bg-amber-50 transition"
             >
-              View Bin Status →
+              Redeem Rewards →
+            </Link>
+          </div>
+
+          <div className="rounded-3xl bg-gradient-to-br from-indigo-800 to-purple-800 p-6 text-white shadow-sm flex flex-col justify-between">
+            <div>
+              <span className="text-3xl">🏆</span>
+              <h4 className="mt-3 text-lg font-bold">Community Leaderboard</h4>
+              <p className="mt-1 text-xs text-indigo-100 leading-relaxed">
+                See where you rank among top recyclers in the community and campus.
+              </p>
+            </div>
+            <Link
+              href="/leaderboard"
+              className="mt-5 inline-block text-center rounded-xl bg-white py-2 text-xs font-bold text-indigo-900 hover:bg-indigo-50 transition"
+            >
+              View Standings →
             </Link>
           </div>
         </div>
 
         {/* Recent Activity Table */}
-        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
-            <Link href="/history" className="text-sm font-semibold text-green-600 hover:underline">
-              View All History →
+        <div className="mt-8 rounded-3xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+            <div>
+              <h3 className="text-lg font-extrabold text-gray-900">Recent Disposals</h3>
+              <p className="text-xs text-gray-500">Your 5 latest verified submissions</p>
+            </div>
+            <Link href="/history" className="text-xs font-bold text-emerald-700 hover:underline">
+              All Activity History →
             </Link>
           </div>
 
           {recentActivity.length === 0 ? (
-            <div className="mt-8 py-8 text-center">
+            <div className="py-12 text-center">
               <span className="text-4xl">🌱</span>
-              <p className="mt-3 text-sm font-medium text-gray-600">No disposal records yet.</p>
-              <p className="mt-1 text-xs text-gray-400">
-                Submit your first waste disposal to earn EcoPoints!
-              </p>
+              <p className="mt-2 text-sm font-semibold text-gray-700">No disposal sessions logged yet.</p>
+              <p className="text-xs text-gray-400 mt-0.5">Start sorting recyclable waste to earn EcoPoints.</p>
               <Link
                 href="/dispose"
-                className="mt-4 inline-block rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white hover:bg-green-700"
+                className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700"
               >
-                Dispose Waste Now
+                Log First Waste Disposal
               </Link>
             </div>
           ) : (
-            <div className="mt-6 divide-y divide-gray-100">
-              {recentActivity.map((record) => (
-                <div key={record._id} className="flex items-center justify-between py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-xl border border-green-100">
-                      {categoryIcons[record.wasteCategory] || "♻️"}
+            <div className="mt-4 divide-y divide-gray-100">
+              {recentActivity.map((rec) => {
+                const meta = categoryMeta[rec.wasteCategory] || categoryMeta.other;
+                return (
+                  <div key={rec._id} className="flex items-center justify-between py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100 text-xl">
+                        {meta.icon}
+                      </div>
+                      <div>
+                        <p className="text-xs font-extrabold capitalize text-gray-900">
+                          {rec.wasteCategory} Waste
+                        </p>
+                        <p className="text-[11px] text-gray-500">
+                          {rec.quantity} kg • {rec.binName || "General Bin"} • {new Date(rec.disposalDate).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold capitalize text-gray-900">
-                        {record.wasteCategory} Waste
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {record.quantity} kg • {record.binName || "General Bin"} •{" "}
-                        {new Date(record.disposalDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="text-right">
-                    <span className="inline-block rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700 border border-green-200">
-                      +{record.pointsEarned} pts
-                    </span>
+                    <div className="text-right">
+                      <span className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700 border border-emerald-200">
+                        +{rec.pointsEarned} pts
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

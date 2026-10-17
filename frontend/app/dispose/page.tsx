@@ -8,12 +8,14 @@ import { useAuth } from "../../context/AuthContext";
 import { api, Bin } from "../../lib/api";
 
 const CATEGORIES = [
-  { id: "plastic", label: "Plastic", rate: 15, icon: "🧴", desc: "Bottles, containers, plastics" },
-  { id: "paper", label: "Paper", rate: 10, icon: "📄", desc: "Newspapers, documents, flyers" },
-  { id: "metal", label: "Metal", rate: 20, icon: "🥫", desc: "Beverage cans, tin, aluminum" },
-  { id: "glass", label: "Glass", rate: 25, icon: "🍾", desc: "Glass bottles, jars" },
-  { id: "cardboard", label: "Cardboard", rate: 10, icon: "📦", desc: "Packing boxes, cartons" },
-  { id: "other", label: "Other", rate: 5, icon: "🗑️", desc: "Miscellaneous recyclable items" },
+  { id: "e-waste", label: "E-Waste", rate: 40, icon: "⚡", desc: "Batteries, circuit boards, cables, gadgets", color: "from-purple-500/10 to-indigo-500/10 border-purple-300" },
+  { id: "glass", label: "Glass", rate: 25, icon: "🍾", desc: "Bottles, jars, transparent glass", color: "from-emerald-500/10 to-teal-500/10 border-emerald-300" },
+  { id: "metal", label: "Metal", rate: 20, icon: "🥫", desc: "Beverage cans, tin, aluminum containers", color: "from-slate-500/10 to-zinc-500/10 border-slate-300" },
+  { id: "plastic", label: "Plastic", rate: 15, icon: "🧴", desc: "PET/HDPE bottles, clean containers", color: "from-blue-500/10 to-cyan-500/10 border-blue-300" },
+  { id: "organic", label: "Organic", rate: 12, icon: "🍌", desc: "Food scraps, fruit peels, compostables", color: "from-lime-500/10 to-green-500/10 border-lime-300" },
+  { id: "paper", label: "Paper", rate: 10, icon: "📄", desc: "Newspapers, notebooks, clean sheets", color: "from-amber-500/10 to-yellow-500/10 border-amber-300" },
+  { id: "cardboard", label: "Cardboard", rate: 10, icon: "📦", desc: "Corrugated boxes, packaging cartons", color: "from-orange-500/10 to-amber-500/10 border-orange-300" },
+  { id: "other", label: "Other", rate: 5, icon: "🗑️", desc: "Miscellaneous dry recyclable items", color: "from-gray-500/10 to-slate-500/10 border-gray-300" },
 ];
 
 export default function DisposePage() {
@@ -48,12 +50,10 @@ export default function DisposePage() {
           setSelectedBinId(res.bins[0]._id);
         }
       })
-      .catch(() => {
-        // Fallback
-      });
+      .catch(() => {});
   }, [user, authLoading, router]);
 
-  const activeCategory = CATEGORIES.find((c) => c.id === selectedCategory) || CATEGORIES[0];
+  const activeCategory = CATEGORIES.find((c) => c.id === selectedCategory) || CATEGORIES[3];
   const parsedQuantity = parseFloat(quantity) || 0;
   const estimatedPoints = parsedQuantity > 0 ? Math.max(5, Math.round(parsedQuantity * activeCategory.rate)) : 0;
 
@@ -95,50 +95,59 @@ export default function DisposePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-16">
+    <main className="min-h-screen bg-slate-50/60 pb-20">
       <Navbar />
 
-      <div className="mx-auto max-w-3xl px-6 py-10">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Dispose Waste</h2>
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-800 mb-2">
+              <span>♻️</span> Manual Waste Segregation
+            </div>
+            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Record Waste Disposal</h2>
             <p className="mt-1 text-sm text-gray-600">
-              Select your segregated waste category, specify mass, and earn EcoPoints.
+              Categorize your sorted recyclable items, log mass in kilograms, and collect instant EcoPoints.
             </p>
           </div>
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-green-700 hover:underline"
+            className="self-start sm:self-auto rounded-lg border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50"
           >
-            ← Back to Dashboard
+            ← Return to Dashboard
           </Link>
         </div>
 
         {/* Success Alert */}
         {successInfo && (
-          <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-6 shadow-sm">
+          <div className="mb-8 rounded-3xl border border-emerald-300 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-6 shadow-md animate-in fade-in">
             <div className="flex items-start gap-4">
-              <span className="text-3xl">🎉</span>
+              <span className="text-4xl">🎉</span>
               <div>
-                <h4 className="text-lg font-bold text-green-900">Disposal Recorded Successfully!</h4>
-                <p className="mt-1 text-sm text-green-800">
-                  You earned{" "}
-                  <span className="font-bold text-green-700">+{successInfo.pointsEarned} EcoPoints</span>.
+                <h4 className="text-lg font-extrabold text-emerald-950">Disposal Recorded & Verified!</h4>
+                <p className="mt-1 text-sm text-emerald-800">
+                  Congratulations! You earned{" "}
+                  <span className="font-extrabold text-emerald-700">+{successInfo.pointsEarned} EcoPoints</span>.
                   Your updated balance is{" "}
-                  <span className="font-bold text-green-700">{successInfo.newTotal} pts</span>.
+                  <span className="font-extrabold text-emerald-900">{successInfo.newTotal} pts</span>.
                 </p>
-                <div className="mt-4 flex gap-3">
+                <div className="mt-4 flex flex-wrap gap-2.5">
                   <Link
                     href="/dashboard"
-                    className="rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white hover:bg-green-700"
+                    className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700"
                   >
-                    View Dashboard
+                    View Updated Dashboard
+                  </Link>
+                  <Link
+                    href="/rewards"
+                    className="rounded-lg bg-amber-500 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-amber-600"
+                  >
+                    🎁 Spend Points in Rewards Store
                   </Link>
                   <Link
                     href="/history"
-                    className="rounded-lg border border-green-600 px-4 py-2 text-xs font-semibold text-green-700 hover:bg-green-100"
+                    className="rounded-lg border border-emerald-300 bg-white px-4 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50"
                   >
-                    View History
+                    View History Log
                   </Link>
                 </div>
               </div>
@@ -148,18 +157,22 @@ export default function DisposePage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
             ⚠️ {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          {/* Waste Category Selector */}
+        <form onSubmit={handleSubmit} className="rounded-3xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm">
+          {/* Category Selector Grid */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800">
-              1. Select Waste Category (Manual Segregation)
-            </label>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-bold text-gray-900">
+                1. Select Waste Category (Manual Segregation)
+              </label>
+              <span className="text-xs text-gray-500 font-medium">8 Recyclable Streams</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {CATEGORIES.map((cat) => {
                 const isSelected = selectedCategory === cat.id;
                 return (
@@ -167,15 +180,20 @@ export default function DisposePage() {
                     type="button"
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`flex flex-col items-center rounded-xl border p-4 text-center transition-all ${
+                    className={`relative flex flex-col items-center justify-between rounded-2xl border p-4 text-center transition-all ${
                       isSelected
-                        ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-600/30"
-                        : "border-gray-200 bg-white hover:border-gray-300"
+                        ? "border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-500/40"
+                        : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
                     }`}
                   >
-                    <span className="text-2xl">{cat.icon}</span>
-                    <span className="mt-2 text-sm font-bold text-gray-900">{cat.label}</span>
-                    <span className="mt-1 text-xs font-semibold text-green-700">
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] text-white">
+                        ✓
+                      </span>
+                    )}
+                    <span className="text-3xl mb-1">{cat.icon}</span>
+                    <span className="text-xs font-bold text-gray-900">{cat.label}</span>
+                    <span className="mt-1.5 inline-block rounded-full bg-emerald-100/70 px-2 py-0.5 text-[10px] font-extrabold text-emerald-800">
                       +{cat.rate} pts / kg
                     </span>
                   </button>
@@ -184,82 +202,95 @@ export default function DisposePage() {
             </div>
           </div>
 
-          {/* Quantity Input */}
-          <div className="mt-6">
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-semibold text-gray-800">
-                2. Quantity (kg)
+          {/* Mass Input & Live Reward Preview */}
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-bold text-gray-900 mb-1.5">
+                2. Enter Waste Mass (Quantity in kg)
               </label>
-              {parsedQuantity > 0 && (
-                <span className="text-xs font-semibold text-green-700">
-                  Estimated Reward: ⭐ +{estimatedPoints} EcoPoints
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0.1"
+                  max="500"
+                  step="0.1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  placeholder="e.g. 2.5"
+                  required
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder-gray-400 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+                />
+                <span className="absolute right-4 top-3 text-sm font-bold text-gray-400">
+                  kg
                 </span>
-              )}
+              </div>
+              <p className="mt-1.5 text-xs text-gray-500">
+                Category Rate: <span className="font-bold text-emerald-700">{activeCategory.rate} points/kg</span>
+              </p>
             </div>
-            <input
-              type="number"
-              min="0.1"
-              max="500"
-              step="0.1"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              placeholder="e.g. 2.5"
-              required
-              className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
-            />
+
+            {/* Live Calculation Preview Card */}
+            <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50/80 to-teal-50/80 p-5 flex flex-col justify-between">
+              <div>
+                <span className="text-xs uppercase tracking-wider text-emerald-800 font-bold block">
+                  Reward Estimator Preview
+                </span>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-emerald-800">
+                    +{estimatedPoints}
+                  </span>
+                  <span className="text-xs font-bold text-emerald-700">EcoPoints</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-emerald-700 mt-2">
+                Formula: {parsedQuantity > 0 ? `${parsedQuantity} kg × ${activeCategory.rate} pts` : "Enter mass above"} (min 5 pts)
+              </p>
+            </div>
           </div>
 
-          {/* Select Smart Bin */}
+          {/* Smart Bin Selector */}
           <div className="mt-6">
-            <label className="block text-sm font-semibold text-gray-800">
-              3. Select EcoSort Simulated Smart Bin
+            <label className="block text-sm font-bold text-gray-900 mb-1.5">
+              3. Select Designated EcoSort Smart Bin
             </label>
             <select
               value={selectedBinId}
               onChange={(e) => setSelectedBinId(e.target.value)}
-              className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
             >
               {bins.map((bin) => (
                 <option key={bin._id} value={bin._id}>
-                  {bin.name} ({bin.location}) — Fill: {bin.simulatedFillPercentage}% ({bin.status})
+                  {bin.name} — {bin.location} (Fill: {bin.simulatedFillPercentage}% • {bin.status})
                 </option>
               ))}
             </select>
-            <p className="mt-1.5 text-xs text-gray-500">
-              Disposing updates the selected bin&apos;s simulated capacity in real time.
+            <p className="mt-1 text-xs text-gray-500">
+              The selected bin&apos;s simulated volume will be incremented automatically.
             </p>
           </div>
 
           {/* Optional Note */}
           <div className="mt-6">
-            <label className="block text-sm font-semibold text-gray-800">
-              4. Optional Notes / Description
+            <label className="block text-sm font-bold text-gray-900 mb-1.5">
+              4. Optional Description / Batch Notes
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Clean beverage bottles after campus event"
-              className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+              placeholder="e.g. Lab cleanup cables or clean cafeteria glass jars"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
             />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit Action */}
           <button
             type="submit"
             disabled={submitting}
-            className="mt-8 w-full rounded-lg bg-green-600 py-3.5 font-bold text-white shadow-sm hover:bg-green-700 disabled:opacity-60 transition-colors"
+            className="mt-8 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 py-3.5 text-sm font-bold text-white shadow-md shadow-emerald-600/20 hover:from-emerald-700 hover:to-green-700 disabled:opacity-60 transition-all active:scale-[0.99]"
           >
-            {submitting ? "Recording Disposal..." : "Submit Disposal & Earn EcoPoints"}
+            {submitting ? "Processing & Calculating Points..." : "Submit Waste Disposal & Claim EcoPoints"}
           </button>
-
-          {/* PBL Transparency Notice */}
-          <div className="mt-6 rounded-xl border border-gray-100 bg-gray-50 p-4 text-center">
-            <p className="text-xs text-gray-500">
-              🌱 <span className="font-semibold text-gray-700">Web PBL Mode:</span> Waste category selection is
-              manual. Points and bin fill levels are calculated deterministically on the server without IoT/ML hardware.
-            </p>
-          </div>
         </form>
       </div>
     </main>

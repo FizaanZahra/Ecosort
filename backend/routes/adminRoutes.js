@@ -62,6 +62,8 @@ router.get("/overview", protect, adminOnly, async (req, res) => {
       metal: 0,
       glass: 0,
       cardboard: 0,
+      organic: 0,
+      "e-waste": 0,
       other: 0
     };
 

@@ -1,19 +1,22 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const WasteRecord = require("../models/WasteRecord");
 const User = require("../models/User");
 const Bin = require("../models/Bin");
 const EcoPointTransaction = require("../models/EcoPointTransaction");
 const Notification = require("../models/Notification");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, JWT_SECRET } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 // Points awarded per kilogram
 const POINT_RATES_PER_KG = {
-  plastic: 15,
-  paper: 10,
-  metal: 20,
+  "e-waste": 40,
   glass: 25,
+  metal: 20,
+  plastic: 15,
+  organic: 12,
+  paper: 10,
   cardboard: 10,
   other: 5
 };
@@ -22,6 +25,8 @@ const POINT_RATES_PER_KG = {
 const MRS_WEIGHTS = {
   metal: 0.95,
   glass: 0.90,
+  "e-waste": 0.88,
+  organic: 0.85,
   paper: 0.80,
   cardboard: 0.80,
   plastic: 0.75,
@@ -215,6 +220,8 @@ router.get("/mrs", protect, async (req, res) => {
       metal: { kg: 0, weight: MRS_WEIGHTS.metal },
       glass: { kg: 0, weight: MRS_WEIGHTS.glass },
       cardboard: { kg: 0, weight: MRS_WEIGHTS.cardboard },
+      organic: { kg: 0, weight: MRS_WEIGHTS.organic },
+      "e-waste": { kg: 0, weight: MRS_WEIGHTS["e-waste"] },
       other: { kg: 0, weight: MRS_WEIGHTS.other }
     };
 
@@ -259,6 +266,68 @@ router.get("/points-history", protect, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch points history", error: error.message });
+  }
+});
+
+// @route   GET /api/waste/leaderboard
+// @desc    Get top recyclers leaderboard
+// @access  Public (Optional auth for personal rank)
+router.get("/leaderboard", async (req, res) => {
+  try {
+    // Check optional token for user identification
+    let currentUserId = null;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        currentUserId = decoded.id;
+      } catch {
+        // Optional auth fail silently
+      }
+    }
+
+    const users = await User.find().select("name email ecoPoints role createdAt");
+
+    const usersWithStats = await Promise.all(
+      users.map(async (u) => {
+        const records = await WasteRecord.find({ user: u._id }).select("quantity");
+        const totalKg = records.reduce((acc, r) => acc + r.quantity, 0);
+        return {
+          id: u._id,
+          name: u.name,
+          role: u.role || "user",
+          ecoPoints: u.ecoPoints || 0,
+          totalWasteKg: Number(totalKg.toFixed(1)),
+          totalContributions: records.length,
+          createdAt: u.createdAt
+        };
+      })
+    );
+
+    // Sort descending by ecoPoints, then totalWasteKg
+    usersWithStats.sort((a, b) => {
+      if (b.ecoPoints !== a.ecoPoints) return b.ecoPoints - a.ecoPoints;
+      return b.totalWasteKg - a.totalWasteKg;
+    });
+
+    const rankedUsers = usersWithStats.map((u, index) => ({
+      ...u,
+      rank: index + 1
+    }));
+
+    let currentUserRank = null;
+    if (currentUserId) {
+      currentUserRank = rankedUsers.find((u) => u.id.toString() === currentUserId.toString()) || null;
+    }
+
+    res.json({
+      success: true,
+      leaderboard: rankedUsers.slice(0, 25),
+      totalParticipants: rankedUsers.length,
+      currentUserRank
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch leaderboard", error: error.message });
   }
 });
 

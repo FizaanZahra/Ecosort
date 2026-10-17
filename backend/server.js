@@ -9,6 +9,7 @@ const wasteRoutes = require("./routes/wasteRoutes");
 const binRoutes = require("./routes/binRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const rewardRoutes = require("./routes/rewardRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,7 @@ app.use("/api/waste", wasteRoutes);
 app.use("/api/bins", binRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/rewards", rewardRoutes);
 
 // Health check endpoints
 app.get("/", (req, res) => {

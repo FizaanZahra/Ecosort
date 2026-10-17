@@ -11,7 +11,15 @@ export interface User {
 
 export interface WasteRecord {
   _id: string;
-  wasteCategory: "plastic" | "paper" | "metal" | "glass" | "cardboard" | "other";
+  wasteCategory:
+    | "plastic"
+    | "paper"
+    | "metal"
+    | "glass"
+    | "cardboard"
+    | "organic"
+    | "e-waste"
+    | "other";
   quantity: number;
   unit: string;
   binName?: string;
@@ -43,6 +51,40 @@ export interface DashboardStats {
   categoryTotals: Record<string, number>;
   availableBinsCount: number;
   totalBinsCount: number;
+}
+
+export interface Reward {
+  _id: string;
+  title: string;
+  description: string;
+  category: "Coupons" | "Merchandise" | "Certificates" | "Sustainability";
+  pointsCost: number;
+  icon: string;
+  voucherTemplate?: string;
+  stock: number;
+}
+
+export interface Redemption {
+  _id: string;
+  reward?: Reward | { title?: string; icon?: string; description?: string };
+  rewardTitle: string;
+  category: string;
+  pointsSpent: number;
+  voucherCode: string;
+  status: "Active" | "Claimed";
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface LeaderboardUser {
+  id: string;
+  name: string;
+  role: string;
+  ecoPoints: number;
+  totalWasteKg: number;
+  totalContributions: number;
+  rank: number;
+  createdAt: string;
 }
 
 // Token helper
@@ -203,6 +245,36 @@ export const api = {
         }>;
         currentBalance: number;
       }>("/waste/points-history"),
+    getLeaderboard: () =>
+      apiRequest<{
+        success: boolean;
+        leaderboard: LeaderboardUser[];
+        totalParticipants: number;
+        currentUserRank: LeaderboardUser | null;
+      }>("/waste/leaderboard"),
+  },
+
+  // Rewards Store
+  rewards: {
+    getAll: () =>
+      apiRequest<{
+        success: boolean;
+        rewards: Reward[];
+      }>("/rewards"),
+    redeem: (id: string) =>
+      apiRequest<{
+        success: boolean;
+        message: string;
+        redemption: Redemption;
+        newPointsBalance: number;
+      }>(`/rewards/${id}/redeem`, {
+        method: "POST",
+      }),
+    getMyRedemptions: () =>
+      apiRequest<{
+        success: boolean;
+        redemptions: Redemption[];
+      }>("/rewards/my-redemptions"),
   },
 
   // Bins
@@ -231,9 +303,10 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    delete: (id: string) => apiRequest<{ success: boolean; message: string }>(`/bins/${id}`, {
-      method: "DELETE",
-    }),
+    delete: (id: string) =>
+      apiRequest<{ success: boolean; message: string }>(`/bins/${id}`, {
+        method: "DELETE",
+      }),
   },
 
   // Dashboard
@@ -278,10 +351,13 @@ export const api = {
         }>;
       }>("/admin/users"),
     updateRole: (userId: string, role: "user" | "admin") =>
-      apiRequest<{ success: boolean; message: string; user: User }>(`/admin/users/${userId}/role`, {
-        method: "PATCH",
-        body: JSON.stringify({ role }),
-      }),
+      apiRequest<{ success: boolean; message: string; user: User }>(
+        `/admin/users/${userId}/role`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ role }),
+        }
+      ),
     getWasteRecords: () =>
       apiRequest<{
         success: boolean;
