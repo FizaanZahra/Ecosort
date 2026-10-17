@@ -18,6 +18,17 @@ const binSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    city: {
+      type: String,
+      default: "Kodakara",
+      trim: true,
+      index: true
+    },
+    area: {
+      type: String,
+      default: "Kodakara Junction",
+      trim: true
+    },
     acceptedCategory: {
       type: String,
       enum: ["All", "Plastic", "Paper", "Metal", "Glass", "Cardboard", "Mixed"],

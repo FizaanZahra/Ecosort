@@ -35,12 +35,19 @@ export interface Bin {
   binId: string;
   name: string;
   location: string;
+  city?: string;
+  area?: string;
   acceptedCategory: string;
   capacityKg: number;
   currentFillKg: number;
   simulatedFillPercentage: number;
   status: "Available" | "Almost Full" | "Full" | "Maintenance";
   lastUpdated: string;
+}
+
+export interface LocationGroup {
+  city: string;
+  areas: string[];
 }
 
 export interface DashboardStats {
@@ -299,12 +306,21 @@ export const api = {
 
   // Bins
   bins: {
-    getAll: () =>
-      apiRequest<{
+    getAll: (city?: string, area?: string) => {
+      const params = new URLSearchParams();
+      if (city && city !== "All") params.append("city", city);
+      if (area && area !== "All") params.append("area", area);
+      const query = params.toString() ? `?${params.toString()}` : "";
+      return apiRequest<{
         success: boolean;
         bins: Bin[];
-        note: string;
-      }>("/bins"),
+      }>(`/bins${query}`);
+    },
+    getLocations: () =>
+      apiRequest<{
+        success: boolean;
+        locations: LocationGroup[];
+      }>("/bins/locations"),
     getById: (id: string) => apiRequest<{ success: boolean; bin: Bin }>(`/bins/${id}`),
     simulateFill: (id: string, simulatedFillPercentage: number) =>
       apiRequest<{ success: boolean; message: string; bin: Bin }>(`/bins/${id}/simulate`, {
@@ -315,6 +331,8 @@ export const api = {
       binId: string;
       name: string;
       location: string;
+      city?: string;
+      area?: string;
       acceptedCategory: string;
       capacityKg?: number;
       simulatedFillPercentage?: number;
