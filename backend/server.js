@@ -37,7 +37,7 @@ app.use("/api/rewards", rewardRoutes);
 // Health check endpoints
 app.get("/", (req, res) => {
   res.json({
-    name: "EcoSort Web Technology PBL API",
+    name: "EcoSort Smart Waste Management API",
     version: "1.0.0",
     status: "online",
     message: "EcoSort Backend is running!"

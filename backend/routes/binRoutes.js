@@ -115,19 +115,19 @@ router.patch("/:id/simulate", protect, adminOnly, async (req, res) => {
     if (bin.simulatedFillPercentage >= 90) {
       await Notification.create({
         user: null,
-        title: `⚠️ Alert: ${bin.name} Bin is ${bin.simulatedFillPercentage}% Full`,
-        message: `Simulated fill level indicates ${bin.name} bin requires collection immediately.`,
+        title: `Alert: ${bin.name} Bin is ${bin.simulatedFillPercentage}% Full`,
+        message: `Fill level telemetry indicates ${bin.name} bin requires collection immediately.`,
         type: "BIN_ALERT"
       });
     }
 
     res.json({
       success: true,
-      message: `Simulated fill updated for ${bin.name} to ${fill}% (${bin.status})`,
+      message: `Fill level updated for ${bin.name} to ${fill}% (${bin.status})`,
       bin
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update bin simulation", error: error.message });
+    res.status(500).json({ message: "Failed to update bin fill level", error: error.message });
   }
 });
 

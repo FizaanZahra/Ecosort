@@ -6,6 +6,19 @@ import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../context/AuthContext";
 import { api, Reward, Redemption } from "../../lib/api";
+import {
+  Gift,
+  Coins,
+  Ticket,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  Sparkles,
+  ShoppingBag,
+  Award,
+  Coffee,
+  Tag,
+} from "lucide-react";
 
 export default function RewardsPage() {
   const router = useRouter();
@@ -80,6 +93,19 @@ export default function RewardsPage() {
     }
   };
 
+  const getRewardIcon = (category: string) => {
+    switch (category?.toLowerCase()) {
+      case "coupons":
+        return Ticket;
+      case "merchandise":
+        return ShoppingBag;
+      case "certificates":
+        return Award;
+      default:
+        return Gift;
+    }
+  };
+
   const categories = ["All", "Coupons", "Merchandise", "Certificates", "Sustainability"];
 
   const filteredRewards =
@@ -88,38 +114,39 @@ export default function RewardsPage() {
       : rewards.filter((r) => r.category === selectedCategory);
 
   return (
-    <main className="min-h-screen bg-slate-50/60 pb-20">
+    <main className="min-h-screen bg-slate-950 text-slate-100 pb-20 selection:bg-emerald-500 selection:text-black">
       <Navbar />
 
       {/* Hero Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white py-12 px-6">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <div className="relative overflow-hidden border-b border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 py-12 px-6">
         <div className="relative mx-auto max-w-7xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600/50 px-3 py-1 text-xs font-semibold text-emerald-100 border border-emerald-400/30 mb-3">
-              <span>🎁</span> EcoPoints Rewards Store
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950/80 px-3 py-1 text-xs font-semibold text-emerald-400 border border-emerald-800/80 mb-3">
+              <Gift className="h-3.5 w-3.5" />
+              <span>EcoPoints Rewards Store</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Turn Your Recycled Waste Into Real Rewards
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+              Turn Recycled Waste Into Real Rewards
             </h1>
-            <p className="mt-2 max-w-2xl text-sm sm:text-base text-emerald-100 leading-relaxed">
-              Redeem your hard-earned EcoPoints for cafeteria dining vouchers, coffee passes,
+            <p className="mt-2 max-w-2xl text-sm sm:text-base text-slate-400 leading-relaxed">
+              Redeem accumulated EcoPoints for cafeteria dining vouchers, coffee passes,
               certified sustainability diplomas, and eco-merchandise.
             </p>
           </div>
 
           {/* Points Balance Card */}
-          <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 min-w-[240px] shadow-xl">
-            <span className="text-xs uppercase tracking-wider text-emerald-200 font-bold">
-              Available Balance
+          <div className="rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 p-5 min-w-[240px] shadow-2xl">
+            <span className="text-xs uppercase tracking-wider text-slate-400 font-bold block flex items-center gap-1.5">
+              <Coins className="h-3.5 w-3.5 text-amber-400" />
+              <span>Available Balance</span>
             </span>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold text-amber-300">⭐ {user?.ecoPoints || 0}</span>
-              <span className="text-xs text-emerald-100 font-semibold">EcoPoints</span>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="text-4xl font-extrabold text-amber-400">{user?.ecoPoints || 0}</span>
+              <span className="text-xs text-slate-400 font-semibold">EcoPoints</span>
             </div>
-            <div className="mt-3 pt-3 border-t border-white/10 flex justify-between items-center text-xs">
-              <span className="text-emerald-100">Active Vouchers:</span>
-              <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-full">
+            <div className="mt-3 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+              <span className="text-slate-400">Claimed Vouchers:</span>
+              <span className="font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded-full">
                 {myRedemptions.length}
               </span>
             </div>
@@ -129,62 +156,68 @@ export default function RewardsPage() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
         {/* Navigation Tabs */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-slate-800">
           <button
             onClick={() => setActiveTab("catalog")}
-            className={`border-b-2 px-6 py-3.5 text-sm font-bold transition-all ${
+            className={`border-b-2 px-6 py-3.5 text-sm font-bold transition-all flex items-center gap-2 ${
               activeTab === "catalog"
-                ? "border-emerald-600 text-emerald-700 bg-white rounded-t-xl"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                ? "border-emerald-500 text-emerald-400 bg-slate-900/60 rounded-t-xl"
+                : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
-            🛒 Rewards Store Catalog
+            <ShoppingBag className="h-4 w-4" />
+            <span>Rewards Catalog</span>
           </button>
           <button
             onClick={() => setActiveTab("vouchers")}
-            className={`border-b-2 px-6 py-3.5 text-sm font-bold transition-all ${
+            className={`border-b-2 px-6 py-3.5 text-sm font-bold transition-all flex items-center gap-2 ${
               activeTab === "vouchers"
-                ? "border-emerald-600 text-emerald-700 bg-white rounded-t-xl"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                ? "border-emerald-500 text-emerald-400 bg-slate-900/60 rounded-t-xl"
+                : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
-            🎟️ My Claimed Vouchers ({myRedemptions.length})
+            <Ticket className="h-4 w-4" />
+            <span>My Claimed Vouchers ({myRedemptions.length})</span>
           </button>
         </div>
 
         {/* Success Modal / Banner */}
         {successVoucher && (
-          <div className="mt-6 rounded-2xl border border-emerald-300 bg-emerald-50 p-6 shadow-md animate-in fade-in">
+          <div className="mt-6 rounded-2xl border border-emerald-800/60 bg-emerald-950/60 p-6 shadow-xl animate-in fade-in">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="text-4xl">🎉</span>
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-950 border border-emerald-700 text-emerald-400">
+                  <CheckCircle2 className="h-7 w-7" />
+                </div>
                 <div>
-                  <h3 className="text-lg font-bold text-emerald-950">
-                    Voucher Claimed Successfully!
+                  <h3 className="text-lg font-bold text-white">
+                    Voucher Claimed Successfully
                   </h3>
-                  <p className="text-xs text-emerald-800 mt-0.5">
-                    Present this voucher code at the partner desk to claim your reward.
+                  <p className="text-xs text-emerald-300 mt-0.5">
+                    Present this voucher code at the partner service desk to claim your reward.
                   </p>
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-white px-3.5 py-1.5 border border-emerald-200 font-mono text-sm font-bold text-emerald-800">
-                    <span>Code:</span>
-                    <span className="text-base text-emerald-600 select-all">{successVoucher.voucherCode}</span>
+                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-1.5 border border-slate-800 font-mono text-sm font-bold text-emerald-400">
+                    <span className="text-slate-400">Code:</span>
+                    <span className="text-base text-emerald-400 select-all">{successVoucher.voucherCode}</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => setActiveTab("vouchers")}
-                className="rounded-lg bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500 transition shadow-md shadow-emerald-950/40"
               >
-                View in My Vouchers →
+                <span>View My Vouchers</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
         )}
 
         {error && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
-            ⚠️ {error}
+          <div className="mt-6 flex items-center gap-2 rounded-xl border border-red-500/40 bg-red-950/60 p-4 text-xs font-semibold text-red-300 shadow-sm">
+            <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -192,15 +225,15 @@ export default function RewardsPage() {
           <>
             {/* Category Filter Chips */}
             <div className="mt-6 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-gray-500 mr-2">Filter by Category:</span>
+              <span className="text-xs font-semibold text-slate-400 mr-2">Filter:</span>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                     selectedCategory === cat
-                      ? "bg-emerald-700 text-white shadow-sm"
-                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                      ? "bg-emerald-600 text-white font-bold shadow-md shadow-emerald-950/40"
+                      : "bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-white"
                   }`}
                 >
                   {cat}
@@ -211,48 +244,51 @@ export default function RewardsPage() {
             {/* Catalog Grid */}
             {loading ? (
               <div className="py-24 text-center">
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"></div>
-                <p className="mt-3 text-sm text-gray-500 font-medium">Loading store rewards...</p>
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
+                <p className="mt-3 text-sm text-slate-400 font-medium">Loading store rewards...</p>
               </div>
             ) : (
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredRewards.map((item) => {
                   const canAfford = (user?.ecoPoints || 0) >= item.pointsCost;
                   const isRedeeming = redeemingId === item._id;
+                  const Icon = getRewardIcon(item.category);
 
                   return (
                     <div
                       key={item._id}
-                      className="group flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm hover:shadow-lg transition-all hover:border-emerald-200"
+                      className="group flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl p-6 shadow-xl hover:border-slate-700 transition-all"
                     >
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="text-4xl group-hover:scale-110 transition-transform">
-                            {item.icon}
-                          </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-700 border border-slate-200">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 border border-slate-800 text-emerald-400 group-hover:scale-105 transition-transform">
+                            <Icon className="h-6 w-6" />
+                          </div>
+                          <span className="rounded-full bg-slate-950 px-3 py-1 text-[11px] font-bold text-slate-300 border border-slate-800">
                             {item.category}
                           </span>
                         </div>
 
-                        <h3 className="mt-4 text-lg font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">
+                        <h3 className="mt-4 text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
                           {item.title}
                         </h3>
-                        <p className="mt-2 text-xs text-gray-600 leading-relaxed">
+                        <p className="mt-2 text-xs text-slate-400 leading-relaxed">
                           {item.description}
                         </p>
                       </div>
 
-                      <div className="mt-6 pt-5 border-t border-gray-100">
+                      <div className="mt-6 pt-5 border-t border-slate-800">
                         <div className="flex items-center justify-between mb-4">
                           <div>
-                            <span className="text-xs text-gray-400 font-medium block">Price:</span>
-                            <span className="text-2xl font-extrabold text-amber-500">
-                              ⭐ {item.pointsCost} <span className="text-xs text-gray-600 font-normal">pts</span>
+                            <span className="text-xs text-slate-500 font-medium block">Price:</span>
+                            <span className="text-2xl font-extrabold text-amber-400 flex items-center gap-1">
+                              <Coins className="h-5 w-5 text-amber-400" />
+                              <span>{item.pointsCost}</span>
+                              <span className="text-xs text-slate-400 font-normal">pts</span>
                             </span>
                           </div>
 
-                          <span className="text-[11px] text-gray-500 bg-gray-50 px-2 py-1 rounded-md border border-gray-100 font-medium">
+                          <span className="text-[11px] text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800 font-medium">
                             {item.stock} available
                           </span>
                         </div>
@@ -260,10 +296,10 @@ export default function RewardsPage() {
                         <button
                           onClick={() => handleRedeem(item)}
                           disabled={!canAfford || item.stock <= 0 || isRedeeming}
-                          className={`w-full rounded-xl py-2.5 text-xs font-bold transition-all shadow-sm ${
+                          className={`w-full rounded-xl py-3 text-xs font-bold uppercase tracking-wider transition-all shadow-md ${
                             canAfford && item.stock > 0
-                              ? "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.98]"
-                              : "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                              ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-500 hover:to-teal-500 shadow-emerald-950/40 active:scale-[0.98]"
+                              : "bg-slate-950 text-slate-500 cursor-not-allowed border border-slate-800"
                           }`}
                         >
                           {isRedeeming
@@ -285,17 +321,20 @@ export default function RewardsPage() {
           /* My Vouchers View */
           <div className="mt-6">
             {myRedemptions.length === 0 ? (
-              <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm">
-                <span className="text-5xl">🎟️</span>
-                <h3 className="mt-3 text-lg font-bold text-gray-900">No Vouchers Yet</h3>
-                <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1">
-                  You haven&apos;t redeemed any rewards yet. Dispose waste to earn EcoPoints and redeem rewards above!
+              <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-12 text-center shadow-xl">
+                <div className="flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-slate-950 border border-slate-800 text-slate-500 mb-3">
+                  <Ticket className="h-7 w-7" />
+                </div>
+                <h3 className="mt-3 text-lg font-bold text-white">No Vouchers Yet</h3>
+                <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1">
+                  You haven&apos;t redeemed any rewards yet. Dispose waste to earn EcoPoints and redeem rewards above.
                 </p>
                 <button
                   onClick={() => setActiveTab("catalog")}
-                  className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                  className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500 transition shadow-md shadow-emerald-950/40"
                 >
-                  Browse Rewards Catalog
+                  <span>Browse Rewards Catalog</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
             ) : (
@@ -303,32 +342,32 @@ export default function RewardsPage() {
                 {myRedemptions.map((red) => (
                   <div
                     key={red._id}
-                    className="relative rounded-2xl border border-emerald-200 bg-gradient-to-br from-white to-emerald-50/40 p-5 shadow-sm"
+                    className="relative rounded-3xl border border-slate-800 bg-slate-900/90 p-5 shadow-xl"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         {red.category}
                       </span>
-                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                      <span className="rounded-full bg-emerald-950/70 border border-emerald-800/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400">
                         {red.status}
                       </span>
                     </div>
 
-                    <h4 className="mt-3 font-bold text-gray-900 text-sm">
+                    <h4 className="mt-3 font-bold text-white text-sm">
                       {red.rewardTitle}
                     </h4>
 
                     {/* Voucher Ticket Code */}
-                    <div className="mt-4 rounded-xl border border-dashed border-emerald-300 bg-white p-3 text-center">
-                      <p className="text-[10px] text-gray-400 uppercase font-semibold">Your Voucher Code</p>
-                      <p className="mt-1 font-mono text-base font-extrabold tracking-wider text-emerald-700 select-all">
+                    <div className="mt-4 rounded-xl border border-dashed border-emerald-500/40 bg-slate-950 p-3 text-center">
+                      <p className="text-[10px] text-slate-400 uppercase font-semibold">Your Voucher Code</p>
+                      <p className="mt-1 font-mono text-base font-extrabold tracking-wider text-emerald-400 select-all">
                         {red.voucherCode}
                       </p>
                     </div>
 
-                    <div className="mt-4 flex justify-between items-center text-[11px] text-gray-500 border-t border-gray-100 pt-3">
+                    <div className="mt-4 flex justify-between items-center text-[11px] text-slate-400 border-t border-slate-800 pt-3">
                       <span>Redeemed: {new Date(red.createdAt).toLocaleDateString()}</span>
-                      <span className="font-semibold text-amber-600">-{red.pointsSpent} pts</span>
+                      <span className="font-semibold text-amber-400">-{red.pointsSpent} pts</span>
                     </div>
                   </div>
                 ))}

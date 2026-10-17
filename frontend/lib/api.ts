@@ -87,6 +87,21 @@ export interface LeaderboardUser {
   createdAt: string;
 }
 
+export interface AdminOverview {
+  success: boolean;
+  metrics: {
+    totalUsers: number;
+    totalWasteKg: number;
+    totalBins: number;
+    fullBins: number;
+    almostFullBins: number;
+    totalDisposalTransactions: number;
+    categoryDistribution: Record<string, number>;
+  };
+  bins: Bin[];
+  recentActivity: Array<WasteRecord & { user?: { name: string; email: string } }>;
+}
+
 // Token helper
 export const getToken = (): string | null => {
   if (typeof window === "undefined") return null;
@@ -363,12 +378,24 @@ export const api = {
           body: JSON.stringify({ role }),
         }
       ),
+    updateUserRole: (userId: string, role: "user" | "admin") =>
+      apiRequest<{ success: boolean; message: string; user: User }>(
+        `/admin/users/${userId}/role`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ role }),
+        }
+      ),
     getWasteRecords: () =>
       apiRequest<{
         success: boolean;
         records: Array<WasteRecord & { user?: { name: string; email: string } }>;
       }>("/admin/waste-records"),
     deleteWasteRecord: (id: string) =>
+      apiRequest<{ success: boolean; message: string }>(`/admin/waste-records/${id}`, {
+        method: "DELETE",
+      }),
+    deleteRecord: (id: string) =>
       apiRequest<{ success: boolean; message: string }>(`/admin/waste-records/${id}`, {
         method: "DELETE",
       }),

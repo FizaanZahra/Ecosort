@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
+import { ShieldCheck, Mail, Lock, AlertCircle, ArrowRight, ArrowLeft, KeyRound } from "lucide-react";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -43,16 +44,16 @@ export default function AdminLogin() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-slate-950 via-slate-900 to-emerald-950 px-4 py-12">
+    <main className="min-h-screen flex items-center justify-center bg-slate-950 px-4 py-12 text-slate-100 selection:bg-emerald-500 selection:text-black">
       <div className="w-full max-w-md">
         {/* Security Shield Card */}
-        <div className="rounded-3xl border border-slate-700/80 bg-slate-900/90 backdrop-blur-xl p-8 shadow-2xl shadow-emerald-950/40 text-white">
+        <div className="rounded-3xl border border-slate-800 bg-slate-900/90 backdrop-blur-xl p-8 shadow-2xl shadow-emerald-950/30 text-white">
           <div className="text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-lg shadow-emerald-600/30 text-white">
-              <span className="text-2xl">🛡️</span>
+              <ShieldCheck className="h-7 w-7" />
             </div>
 
-            <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-950 px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 border border-emerald-800">
+            <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-950/80 px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 border border-emerald-800/80">
               Admin Portal
             </div>
 
@@ -60,13 +61,14 @@ export default function AdminLogin() {
               System Administration
             </h1>
             <p className="mt-1 text-xs text-slate-400">
-              Restricted management console for EcoSort operators and reviewers.
+              Restricted management console for EcoSort operators and staff.
             </p>
           </div>
 
           {error && (
-            <div className="mt-6 rounded-2xl border border-red-500/40 bg-red-950/60 p-3.5 text-xs font-semibold text-red-300">
-              ⚠️ {error}
+            <div className="mt-6 flex items-center gap-2 rounded-2xl border border-red-500/40 bg-red-950/60 p-3.5 text-xs font-semibold text-red-300">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -76,45 +78,57 @@ export default function AdminLogin() {
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Admin Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@ecosort.com"
-                required
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-              />
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@ecosort.com"
+                  required
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950/80 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
+              </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                  Master Password
-                </label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                Master Password
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                  <Lock className="h-4 w-4" />
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950/80 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
               </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-              />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3 text-xs font-extrabold text-white shadow-lg shadow-emerald-700/25 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-60 transition active:scale-[0.98]"
+              className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-lg shadow-emerald-950/40 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-60 transition active:scale-[0.98]"
             >
-              {loading ? "Authenticating Administrator..." : "Sign In to Admin Console →"}
+              <span>{loading ? "Authenticating Administrator..." : "Sign In to Admin Console"}</span>
+              <ArrowRight className="h-4 w-4" />
             </button>
           </form>
 
           {/* Demo Credentials Quick-Fill Pill */}
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-3.5 text-center">
+          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-center">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400 font-medium">Demo Administrator:</span>
+              <span className="text-slate-400 font-medium flex items-center gap-1.5">
+                <KeyRound className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Demo Administrator:</span>
+              </span>
               <button
                 type="button"
                 onClick={handleFillDemo}
@@ -123,7 +137,7 @@ export default function AdminLogin() {
                 Auto-fill Demo Credentials
               </button>
             </div>
-            <p className="mt-1 font-mono text-[11px] text-slate-400">
+            <p className="mt-1 font-mono text-[11px] text-slate-400 text-left pl-5">
               admin@ecosort.com • admin123
             </p>
           </div>
@@ -132,9 +146,10 @@ export default function AdminLogin() {
           <div className="mt-6 text-center">
             <Link
               href="/login"
-              className="text-xs font-semibold text-slate-400 hover:text-emerald-400 transition"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-emerald-400 transition"
             >
-              ← Return to Standard Member Login
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Return to Standard Member Login</span>
             </Link>
           </div>
         </div>
