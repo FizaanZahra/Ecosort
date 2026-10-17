@@ -1,73 +1,99 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+
 export default function Login() {
+  const router = useRouter();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!email || !password) {
+      setError("Please provide both email and password.");
+      return;
+    }
+
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
+
+    if (result.success) {
+      router.push("/dashboard");
+    } else {
+      setError(result.message || "Invalid email or password.");
+    }
+  };
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-green-50 px-6">
-
+    <main className="flex min-h-screen items-center justify-center bg-green-50 px-6 py-12">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-
         {/* Logo */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-green-700">
+          <Link href="/" className="inline-block text-3xl font-bold text-green-700">
             🌱 EcoSort
-          </h1>
-
-          <p className="mt-2 text-gray-600">
-            Welcome back!
-          </p>
+          </Link>
+          <p className="mt-2 text-gray-600">Welcome back!</p>
         </div>
 
+        {error && (
+          <div className="mt-6 rounded-lg bg-red-50 p-3.5 text-sm font-medium text-red-700 border border-red-200">
+            ⚠️ {error}
+          </div>
+        )}
 
         {/* Login Form */}
-        <form className="mt-8 space-y-5">
-
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Email
-            </label>
-
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Email Address</label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+              required
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
-
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Password
-            </label>
-
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+              required
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
             />
           </div>
-
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-green-600 py-3 font-semibold text-white hover:bg-green-700"
+            disabled={loading}
+            className="w-full mt-2 rounded-lg bg-green-600 py-3 font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-60 transition-colors"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
 
-
         {/* Register Link */}
-        <p className="mt-6 text-center text-gray-600">
-          Don't have an account?{" "}
-          <a
-            href="/register"
-            className="font-semibold text-green-600 hover:underline"
-          >
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="font-semibold text-green-600 hover:underline">
             Register
-          </a>
+          </Link>
         </p>
-
       </div>
-
     </main>
   );
 }
