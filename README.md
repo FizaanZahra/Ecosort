@@ -353,6 +353,9 @@ All requests requiring authentication must include the HTTP header:
 | `POST` | `/api/users/admin/login` | Public | Dedicated administrator authentication |
 | `GET` | `/api/users/profile` | Authenticated | Retrieve current user profile |
 | `GET` | `/api/users/leaderboard` | Public / Auth | Top recycling users leaderboard |
+| `GET` | `/api/users/notifications` | Authenticated | Retrieve user & broadcast notices with unread count |
+| `PATCH` | `/api/users/notifications/:id/read` | Authenticated | Mark single notification as read |
+| `PATCH` | `/api/users/notifications/read-all` | Authenticated | Mark all notifications as read |
 
 ### Waste Disposal
 | Method | Endpoint | Access | Description |
@@ -369,7 +372,20 @@ All requests requiring authentication must include the HTTP header:
 | `GET` | `/api/bins/locations` | Authenticated | Retrieve grouped list of cities & local areas |
 | `GET` | `/api/bins/:binId` | Authenticated | Retrieve single bin details |
 | `POST` | `/api/bins` | Admin | Create a new localized smart bin |
-| `PATCH` | `/api/bins/:binId/fill` | Admin | Update / simulate bin fill level |
+| `PUT` | `/api/bins/:id` | Admin | Update bin properties & location details |
+| `POST` | `/api/bins/:id/collect` | Admin | Mark bin collected (resets to 0% & notifies community) |
+| `PATCH` | `/api/bins/:id/simulate` | Admin | Update / simulate bin fill level |
+| `DELETE` | `/api/bins/:id` | Admin | Delete a smart bin from fleet |
+
+### Administration & Community Messaging
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/admin/overview` | Admin | System-wide statistics and audit logs |
+| `GET` | `/api/admin/users` | Admin | List all registered users with metrics |
+| `PUT` | `/api/admin/users/:id` | Admin | Edit user profile (name, email, role, points balance) |
+| `DELETE` | `/api/admin/users/:id` | Admin | Delete user account from system |
+| `POST` | `/api/admin/notifications` | Admin | Broadcast or direct message users (collection, alerts, announcements) |
+| `DELETE` | `/api/admin/waste-records/:id` | Admin | Revoke invalid waste submission & deduct points |
 
 ### Rewards & Redemptions
 | Method | Endpoint | Access | Description |
@@ -377,12 +393,6 @@ All requests requiring authentication must include the HTTP header:
 | `GET` | `/api/rewards` | Authenticated | List all active rewards in the store |
 | `POST` | `/api/rewards/redeem` | Authenticated | Redeem reward using EcoPoints |
 | `GET` | `/api/rewards/my-redemptions`| Authenticated | View current user's redeemed vouchers |
-
-### Dashboard & Analytics
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/dashboard/summary` | Authenticated | User KPIs, points, MRS score & chart data |
-| `GET` | `/api/admin/overview` | Admin | System-wide statistics and audit logs |
 
 ---
 

@@ -336,4 +336,92 @@ router.delete("/:id", protect, adminOnly, async (req, res) => {
   }
 });
 
+// @route   PUT /api/bins/:id
+// @desc    Update an existing bin / location details (Admin only)
+// @access  Private/Admin
+router.put("/:id", protect, adminOnly, async (req, res) => {
+  try {
+    const {
+      name,
+      location,
+      city,
+      area,
+      acceptedCategory,
+      capacityKg,
+      simulatedFillPercentage,
+      status
+    } = req.body;
+
+    const bin = await Bin.findById(req.params.id);
+    if (!bin) {
+      return res.status(404).json({ message: "Bin not found" });
+    }
+
+    if (name) bin.name = name.trim();
+    if (location) bin.location = location.trim();
+    if (city) bin.city = city.trim();
+    if (area) bin.area = area.trim();
+    if (acceptedCategory) bin.acceptedCategory = acceptedCategory;
+    if (capacityKg !== undefined) {
+      bin.capacityKg = Math.max(1, parseFloat(capacityKg));
+    }
+    if (simulatedFillPercentage !== undefined) {
+      bin.simulatedFillPercentage = Math.min(100, Math.max(0, parseInt(simulatedFillPercentage)));
+      bin.currentFillKg = Number(((bin.simulatedFillPercentage / 100) * bin.capacityKg).toFixed(1));
+    }
+    if (status) {
+      bin.status = status;
+    } else {
+      bin.updateStatusFromFill();
+    }
+    bin.lastUpdated = new Date();
+    await bin.save();
+
+    res.json({
+      success: true,
+      message: `Bin #${bin.binId} updated successfully.`,
+      bin
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update bin", error: error.message });
+  }
+});
+
+// @route   POST /api/bins/:id/collect
+// @desc    Mark bin as collected and emptied by municipal team, notify users (Admin only)
+// @access  Private/Admin
+router.post("/:id/collect", protect, adminOnly, async (req, res) => {
+  try {
+    const bin = await Bin.findById(req.params.id);
+    if (!bin) {
+      return res.status(404).json({ message: "Bin not found" });
+    }
+
+    const previousFill = bin.simulatedFillPercentage;
+    bin.simulatedFillPercentage = 0;
+    bin.currentFillKg = 0;
+    bin.status = "Available";
+    bin.lastUpdated = new Date();
+    await bin.save();
+
+    // Broadcast collection notification to all users
+    const notification = await Notification.create({
+      user: null,
+      city: bin.city,
+      title: `Waste Collected: #${bin.binId} (${bin.name})`,
+      message: `Municipal collection complete! Bin #${bin.binId} at ${bin.location}, ${bin.area}, ${bin.city} has been emptied (was ${previousFill}% full) and is now ready for waste disposal.`,
+      type: "COLLECTION"
+    });
+
+    res.json({
+      success: true,
+      message: `Bin #${bin.binId} marked as collected and emptied. Notification sent to community.`,
+      bin,
+      notification
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to mark bin as collected", error: error.message });
+  }
+});
+
 module.exports = router;

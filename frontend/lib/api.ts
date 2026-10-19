@@ -109,6 +109,17 @@ export interface AdminOverview {
   recentActivity: Array<WasteRecord & { user?: { name: string; email: string } }>;
 }
 
+export interface NotificationItem {
+  _id: string;
+  user?: string | null;
+  city?: string | null;
+  title: string;
+  message: string;
+  type: "DISPOSAL" | "POINTS" | "BIN_ALERT" | "SYSTEM" | "COLLECTION" | "ANNOUNCEMENT";
+  read: boolean;
+  createdAt: string;
+}
+
 // Token helper
 export const getToken = (): string | null => {
   if (typeof window === "undefined") return null;
@@ -199,18 +210,39 @@ export const api = {
     getNotifications: () =>
       apiRequest<{
         success: boolean;
-        notifications: Array<{
-          _id: string;
-          title: string;
-          message: string;
-          type: string;
-          read: boolean;
-          createdAt: string;
-        }>;
+        notifications: NotificationItem[];
         unreadCount: number;
       }>("/users/notifications"),
     markNotificationRead: (id: string) =>
-      apiRequest<{ success: boolean }>(`/users/notifications/${id}/read`, {
+      apiRequest<{ success: boolean; notification: NotificationItem }>(
+        `/users/notifications/${id}/read`,
+        {
+          method: "PATCH",
+        }
+      ),
+    markAllNotificationsRead: () =>
+      apiRequest<{ success: boolean; message: string }>("/users/notifications/read-all", {
+        method: "PATCH",
+      }),
+  },
+
+  // Users & Notifications
+  users: {
+    getNotifications: () =>
+      apiRequest<{
+        success: boolean;
+        notifications: NotificationItem[];
+        unreadCount: number;
+      }>("/users/notifications"),
+    markNotificationRead: (id: string) =>
+      apiRequest<{ success: boolean; notification: NotificationItem }>(
+        `/users/notifications/${id}/read`,
+        {
+          method: "PATCH",
+        }
+      ),
+    markAllNotificationsRead: () =>
+      apiRequest<{ success: boolean; message: string }>("/users/notifications/read-all", {
         method: "PATCH",
       }),
   },
@@ -341,6 +373,30 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
+    update: (
+      id: string,
+      data: {
+        name?: string;
+        location?: string;
+        city?: string;
+        area?: string;
+        acceptedCategory?: string;
+        capacityKg?: number;
+        simulatedFillPercentage?: number;
+        status?: string;
+      }
+    ) =>
+      apiRequest<{ success: boolean; message: string; bin: Bin }>(`/bins/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    markCollected: (id: string) =>
+      apiRequest<{ success: boolean; message: string; bin: Bin; notification: any }>(
+        `/bins/${id}/collect`,
+        {
+          method: "POST",
+        }
+      ),
     delete: (id: string) =>
       apiRequest<{ success: boolean; message: string }>(`/bins/${id}`, {
         method: "DELETE",
@@ -402,6 +458,37 @@ export const api = {
         {
           method: "PATCH",
           body: JSON.stringify({ role }),
+        }
+      ),
+    updateUser: (
+      userId: string,
+      data: {
+        name?: string;
+        email?: string;
+        role?: "user" | "admin";
+        ecoPoints?: number;
+      }
+    ) =>
+      apiRequest<{ success: boolean; message: string; user: User }>(`/admin/users/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    deleteUser: (userId: string) =>
+      apiRequest<{ success: boolean; message: string }>(`/admin/users/${userId}`, {
+        method: "DELETE",
+      }),
+    sendNotification: (data: {
+      userId?: string;
+      city?: string;
+      title: string;
+      message: string;
+      type?: string;
+    }) =>
+      apiRequest<{ success: boolean; message: string; notification: NotificationItem }>(
+        "/admin/notifications",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
         }
       ),
     getWasteRecords: () =>
