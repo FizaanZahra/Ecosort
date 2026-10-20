@@ -208,4 +208,124 @@ router.delete("/waste-records/:id", protect, adminOnly, async (req, res) => {
   }
 });
 
+// @route   PUT /api/admin/users/:id
+// @desc    Edit user details (name, email, role, ecoPoints)
+// @access  Private/Admin
+router.put("/users/:id", protect, adminOnly, async (req, res) => {
+  try {
+    const { name, email, role, ecoPoints } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name.trim();
+    if (email) {
+      const normalizedEmail = email.toLowerCase().trim();
+      if (normalizedEmail !== user.email) {
+        const existing = await User.findOne({ email: normalizedEmail });
+        if (existing) {
+          return res.status(400).json({ message: "Email is already taken by another user." });
+        }
+        user.email = normalizedEmail;
+      }
+    }
+    if (role && ["user", "admin"].includes(role)) {
+      user.role = role;
+    }
+    if (ecoPoints !== undefined) {
+      const newPoints = parseInt(ecoPoints);
+      if (!isNaN(newPoints) && newPoints >= 0) {
+        const pointDiff = newPoints - (user.ecoPoints || 0);
+        user.ecoPoints = newPoints;
+        if (pointDiff !== 0) {
+          await EcoPointTransaction.create({
+            user: user._id,
+            transactionType: pointDiff > 0 ? "WASTE_DISPOSAL" : "REWARD_REDEEM",
+            pointsAmount: pointDiff,
+            description: `Administrative points adjustment by ${req.user.name || "Admin"}`
+          });
+        }
+      }
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `User ${user.name} (${user.email}) updated successfully.`,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        ecoPoints: user.ecoPoints
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update user", error: error.message });
+  }
+});
+
+// @route   DELETE /api/admin/users/:id
+// @desc    Delete a user account (Admin only)
+// @access  Private/Admin
+router.delete("/users/:id", protect, adminOnly, async (req, res) => {
+  try {
+    if (req.user._id.toString() === req.params.id) {
+      return res.status(400).json({ message: "You cannot delete your own admin account." });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: `User ${user.email} removed from system.` });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete user", error: error.message });
+  }
+});
+
+// @route   POST /api/admin/notifications
+// @desc    Send a message / notification to a user or broadcast to community / city
+// @access  Private/Admin
+router.post("/notifications", protect, adminOnly, async (req, res) => {
+  try {
+    const { userId, city, title, message, type } = req.body;
+
+    if (!title || !message) {
+      return res.status(400).json({ message: "Title and message are required." });
+    }
+
+    const validTypes = ["DISPOSAL", "POINTS", "BIN_ALERT", "SYSTEM", "COLLECTION", "ANNOUNCEMENT"];
+    const notifType = validTypes.includes(type) ? type : "ANNOUNCEMENT";
+
+    const targetUser = userId && userId !== "ALL" ? userId : null;
+    const targetCity = city && city !== "All" ? city.trim() : null;
+
+    const notification = await Notification.create({
+      user: targetUser,
+      city: targetCity,
+      title: title.trim(),
+      message: message.trim(),
+      type: notifType,
+      read: false
+    });
+
+    res.status(201).json({
+      success: true,
+      message: targetUser
+        ? "Direct notification sent to user successfully."
+        : targetCity
+        ? `Broadcast notification dispatched to all users in ${targetCity}.`
+        : "System-wide broadcast notification dispatched to all users.",
+      notification
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to send notification", error: error.message });
+  }
+});
+
 module.exports = router;

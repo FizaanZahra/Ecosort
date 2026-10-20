@@ -20,8 +20,13 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["DISPOSAL", "POINTS", "BIN_ALERT", "SYSTEM"],
+      enum: ["DISPOSAL", "POINTS", "BIN_ALERT", "SYSTEM", "COLLECTION", "ANNOUNCEMENT"],
       default: "SYSTEM"
+    },
+    city: {
+      type: String,
+      default: null,
+      trim: true
     },
     read: {
       type: Boolean,

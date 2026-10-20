@@ -283,4 +283,22 @@ router.patch("/notifications/:id/read", protect, async (req, res) => {
   }
 });
 
+// @route   PATCH /api/users/notifications/read-all
+// @desc    Mark all notifications as read for current user
+// @access  Private
+router.patch("/notifications/read-all", protect, async (req, res) => {
+  try {
+    await Notification.updateMany(
+      {
+        $or: [{ user: req.user._id }, { user: null }],
+        read: false
+      },
+      { read: true }
+    );
+    res.json({ success: true, message: "All notifications marked as read." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to mark notifications as read", error: error.message });
+  }
+});
+
 module.exports = router;
