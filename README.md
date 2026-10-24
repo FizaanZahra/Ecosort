@@ -7,6 +7,7 @@
 [![Express.js](https://img.shields.io/badge/Express.js-5.2-black?style=for-the-badge&logo=express)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas_/_Mongoose_9-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 [![Lucide Icons](https://img.shields.io/badge/Icons-Lucide_React-F56565?style=for-the-badge)](https://lucide.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
 
 **EcoSort** is an intelligent, full-stack waste segregation and community recycling platform. Designed with a modern, high-contrast dark theme, it bridges household waste disposal, local municipal smart bin infrastructure, transparent environmental analytics, and a gamified reward ecosystem.
 
@@ -213,6 +214,8 @@ Ecosort/
 │   │   ├── resetAdminPoints.js    # Resets admin points to 0
 │   │   └── seedLocationBins.js    # Seeds location-based bins (Kodakara, etc.)
 │   ├── .env.example               # Backend environment template
+│   ├── .dockerignore              # Backend Docker ignore rules
+│   ├── Dockerfile                 # Backend container definition
 │   ├── package.json               # Backend dependencies and scripts
 │   └── server.js                  # Express application entrypoint
 │
@@ -239,10 +242,14 @@ Ecosort/
 │   ├── lib/
 │   │   └── api.ts                 # Type-safe API client layer
 │   ├── .env.example               # Frontend environment template
+│   ├── .dockerignore              # Frontend Docker ignore rules
+│   ├── Dockerfile                 # Multi-stage Next.js Dockerfile
 │   ├── package.json               # Frontend dependencies and scripts
 │   └── tsconfig.json              # TypeScript configuration
 │
+├── .dockerignore                  # Root Docker ignore rules
 ├── .gitignore                     # Git ignore rules
+├── docker-compose.yml             # Full-stack Docker composition
 └── README.md                      # Project documentation
 ```
 
@@ -324,6 +331,30 @@ Ecosort/
    npm run dev
    ```
    The web application will be accessible at `http://localhost:3000`.
+
+---
+
+### 3. Docker Compose Setup (Single Command)
+
+If you have Docker and Docker Compose installed, you can launch the entire stack with a single command:
+
+1. Configure backend environment variables:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+2. Build and run both frontend and backend containers:
+   ```bash
+   docker compose up --build
+   ```
+
+   * **Frontend Application:** `http://localhost:3000`
+   * **Backend API:** `http://localhost:5000`
+
+3. To stop the running containers:
+   ```bash
+   docker compose down
+   ```
 
 ---
 
@@ -410,7 +441,7 @@ All requests requiring authentication must include the HTTP header:
   - **Database ODM:** Mongoose 9.1
   - **Database:** MongoDB Atlas / Local MongoDB
   - **Security:** JSON Web Tokens (`jsonwebtoken`), Password Hashing (`bcryptjs`), CORS
-- **Dev Tools:** ESLint, Git, Postman
+- **Containerization & Dev Tools:** Docker, Docker Compose, ESLint, Git, Postman
 
 ---
 
